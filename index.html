@@ -1,29 +1,197 @@
-<!DOCTYPE html>
-<html lang="cs">
 <head>
   <meta charset="utf-8">
-  <title>Můj web</title>
+  <title>Krecoun server</title>
   <style>
     body {
-      background-color: #fafafa;
-      font-family: Arial, sans-serif;
+      background-color: #ffffff;
+      font-family: Arial, Helvetica, sans-serif, sans-serif;
       margin: 40px;
     }
     h1 {
       color: #00ff37c7;
     }
-    img {
-      width: 200px;
+    /* přidané: IP vpravo nahoře */
+    #server-ip {
+      position: fixed;
+      top: 10px;
+      right: 10px;
+      background: rgba(0, 0, 0, 0.65);
+      color: #ffffff;
+      padding: 6px 10px;
+      border-radius: 6px;
+      font-size: 14px;
+      font-family: inherit;
+      z-index: 1000;
+      cursor: pointer;
+      user-select: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+    #server-ip .hint {
+      background: rgba(255,255,255,0.12);
+      padding: 3px 6px;
+      border-radius: 4px;
+      font-size: 12px;
+      opacity: 0;
+      transform: translateY(-4px);
+      transition: opacity .18s, transform .18s;
+      pointer-events: none;
+    }
+    #server-ip.show .hint {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* nové styly: info karta a instrukce pro modpack */
+    .card {
+      background: #f7f7f7;
       border-radius: 10px;
+      padding: 18px;
+      margin: 12px 0;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+    .card h2 {
+      margin: 0 0 8px 0;
+      font-size: 18px;
+      color: #0a6f3a;
+    }
+    .meta {
+      color: #333;
+      font-size: 14px;
+      margin-bottom: 8px;
+    }
+    .actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 10px;
+      flex-wrap: wrap;
+    }
+    .btn {
+      background: #0a6f3a;
+      color: #fff;
+      padding: 8px 12px;
+      border-radius: 6px;
+      text-decoration: none;
+      cursor: pointer;
+      border: none;
+      font-size: 14px;
+    }
+    .btn.secondary {
+      background: #e6e6e6;
+      color: #111;
+    }
+    .steps {
+      margin: 8px 0 0 0;
+      padding-left: 18px;
+      color: #222;
+      font-size: 14px;
+    }
+    .small {
+      font-size: 12px;
+      color: #666;
     }
   </style>
 </head>
 <body>
-  <h1>Vítej na mém webu!</h1>
-  <p>Toto je můj úplně první web napsaný v HTML.</p>
+  <div id="server-ip" role="button" tabindex="0" data-ip="mc.krecoun.fun" title="Klikni pro zkopírování">
+    IP: mc.krecoun.fun
+    <span class="hint" aria-hidden="true">Zkopírováno!</span>
+  </div>
 
-  <img src="img/logo.png" alt="Moje logo">
+  <!-- přidáno: hezké informace o serveru a instrukce pro CurseForge -->
+  <section class="card" id="server-info-card">
+    <h2>Informace o serveru</h2>
+    <div class="meta"><strong>IP:</strong> <span id="server-ip-text">mc.krecoun.fun</span></div>
+    <div class="meta"><strong>Typ:</strong> Minecraft (Forge/Modpack)</div>
+    <div class="meta small">Kliknutím na IP ji zkopírujete do schránky.</div>
 
-  <p>Navštiv také můj <a href="https://github.com">GitHub</a>.</p>
+    <h2 style="margin-top:12px">Jak přidat modpack do CurseForge</h2>
+    <ol class="steps">
+      <li>Otevři aplikaci CurseForge (Minecraft) — pokud ji nemáš, stáhni ji z curseforge.com nebo přes Overwolf.</li>
+      <li>V CurseForge přejdi na záložku Minecraft.</li>
+      <li>Klepni na tlačítko import.</li>
+      <li>Zvol "Use Profile Code.</li>
+      <li>Vlož tento kód: <strong>DbNYvoZH</strong></li>
+      <li>Po importu spusť profil — client automaticky nainstaluje mody a závislosti.</li>
+    </ol>
+
+    <div class="actions">
+      <button class="btn" id="copy-modpack-url" data-copy="DbNYvoZH" title="Zkopíruje Code">Kopírovat </button>
+    </div>
+
+    <div id="modpack-hint" class="small" style="margin-top:10px; color:#0a6f3a;"></div>
+  </section>
+
+  <script>
+    (function(){
+      const el = document.getElementById('server-ip');
+      if (!el) return;
+      const ip = el.dataset.ip || el.textContent.replace(/^IP:\s*/,'').trim();
+      const hint = el.querySelector('.hint');
+
+      function showHint(elHint, text){
+        if (!elHint) return;
+        elHint.textContent = text;
+        elHint.parentElement && elHint.parentElement.classList && elHint.parentElement.classList.add('show');
+        clearTimeout(elHint._hideTimeout);
+        elHint._hideTimeout = setTimeout(()=> elHint.parentElement.classList.remove('show'), 1400);
+      }
+
+      function copyToClipboard(text){
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          return navigator.clipboard.writeText(text).then(()=> { return true; })
+            .catch(()=> fallbackCopy(text));
+        } else {
+          return fallbackCopy(text);
+        }
+      }
+
+      function fallbackCopy(text){
+        try {
+          const ta = document.createElement('textarea');
+          ta.value = text;
+          ta.style.position = 'fixed';
+          ta.style.left = '-9999px';
+          document.body.appendChild(ta);
+          ta.focus();
+          ta.select();
+          const ok = document.execCommand('copy');
+          document.body.removeChild(ta);
+          return ok;
+        } catch (e) {
+          return false;
+        }
+      }
+
+      // existující: IP copy
+      el.addEventListener('click', ()=> {
+        copyToClipboard(ip).then(()=> showHint(hint, 'Zkopírováno'));
+      });
+      el.addEventListener('keydown', (e)=>{
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          copyToClipboard(ip).then(()=> showHint(hint, 'Zkopírováno'));
+        }
+      });
+
+      // nové: kopírování URL modpacku a hint text
+      const copyButtons = document.querySelectorAll('[data-copy]');
+      const modpackHint = document.getElementById('modpack-hint');
+      copyButtons.forEach(btn => {
+        btn.addEventListener('click', ()=>{
+          const v = btn.getAttribute('data-copy');
+          copyToClipboard(v).then((ok)=>{
+            if (ok) {
+              modpackHint.textContent = 'URL modpacku zkopírována do schránky.';
+              setTimeout(()=> modpackHint.textContent = '', 1800);
+            } else {
+              modpackHint.textContent = 'Kopírování selhalo — stáhni modpack ručně.';
+              setTimeout(()=> modpackHint.textContent = '', 3000);
+            }
+          });
+        });
+      });
+    })();
+  </script>
 </body>
-</html>
