@@ -43,6 +43,21 @@
       transform: translateY(0);
     }
 
+    #server-ip .dynmap-link {
+      color: white;
+      text-decoration: none;
+      background: rgba(255,255,255,0.1);
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 13px;
+      transition: background 0.2s;
+      margin-left: 8px;
+    }
+
+    #server-ip .dynmap-link:hover {
+      background: rgba(255,255,255,0.2);
+    }
+
     /* nové styly: info karta a instrukce pro modpack */
     .card {
       background: #f7f7f7;
@@ -97,6 +112,7 @@
   <div id="server-ip" role="button" tabindex="0" data-ip="mc.krecoun.fun" title="Klikni pro zkopírování">
     IP: mc.krecoun.fun
     <span class="hint" aria-hidden="true">Zkopírováno!</span>
+    <a href="https://map.krecoun.fun" class="dynmap-link" target="_blank" rel="noopener noreferrer" title="Otevřít mapu serveru" onclick="event.stopPropagation()">🗺️ Mapa</a>
   </div>
 
   <!-- přidáno: informace o serveru a instrukce pro CurseForge -->
