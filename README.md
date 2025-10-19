@@ -1,2 +1,1 @@
-# krecoun
-web
+# Webovky pro server
