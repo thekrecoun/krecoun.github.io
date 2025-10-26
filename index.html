@@ -1,3 +1,5 @@
+<!DOCTYPE html>
+<html lang="cs">
 <head>
   <meta charset="utf-8">
   <link rel="icon" type="image/x-icon" href="grass_block.ico">
@@ -5,204 +7,149 @@
   <style>
     body {
       background-color: #4d3201;
-      font-family: Arial, Helvetica, sans-serif, sans-serif;
+      font-family: Arial, sans-serif;
       margin: 40px;
-    }
-    h1 {
-      color: #00ff37c7;
-    }
-    /* přidané: IP vpravo nahoře */
-    #server-ip {
-      position: fixed;
-      top: 10px;
-      right: 10px;
-      background: rgba(0, 0, 0, 0.65);
-      color: #ffffff;
-      padding: 6px 10px;
-      border-radius: 6px;
-      font-size: 14px;
-      font-family: inherit;
-      z-index: 1000;
-      cursor: pointer;
-      user-select: none;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-    }
-    #server-ip .hint {
-      background: rgba(255,255,255,0.12);
-      padding: 3px 6px;
-      border-radius: 4px;
-      font-size: 12px;
-      opacity: 0;
-      transform: translateY(-4px);
-      transition: opacity .18s, transform .18s;
-      pointer-events: none;
-    }
-    #server-ip.show .hint {
-      opacity: 1;
-      transform: translateY(0);
+      color: #333;
     }
 
-    #server-ip .dynmap-link {
-      color: white;
-      text-decoration: none;
-      background: rgba(255,255,255,0.1);
-      padding: 4px 8px;
-      border-radius: 4px;
-      font-size: 13px;
-      transition: background 0.2s;
-      margin-left: 8px;
-    }
-
-    #server-ip .dynmap-link:hover {
-      background: rgba(255,255,255,0.2);
-    }
-
-    /* nové styly: info karta a instrukce pro modpack */
     .card {
       background: #f7f7f7;
       border-radius: 10px;
-      padding: 18px;
-      margin: 12px 0;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+      padding: 24px;
+      max-width: 600px;
+      margin: 40px auto;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     }
-    .card h2 {
-      margin: 0 0 8px 0;
-      font-size: 18px;
+
+    .card h1 {
+      margin: 0 0 20px 0;
       color: #0a6f3a;
+      font-size: 24px;
     }
-    .meta {
-      color: #333;
-      font-size: 14px;
-      margin-bottom: 8px;
+
+    .info-row {
+      margin: 12px 0;
+      font-size: 15px;
+      line-height: 1.5;
     }
-    .actions {
-      display: flex;
-      gap: 8px;
-      margin-top: 10px;
-      flex-wrap: wrap;
-    }
-    .btn {
-      background: #0a6f3a;
-      color: #fff;
-      padding: 8px 12px;
-      border-radius: 6px;
-      text-decoration: none;
+
+    .clickable-ip {
+      background: rgba(10, 111, 58, 0.1);
+      padding: 6px 12px;
+      border-radius: 4px;
       cursor: pointer;
-      border: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-left: 4px;
+    }
+
+    .clickable-ip:hover {
+      background: rgba(10, 111, 58, 0.15);
+    }
+
+    .hint {
+      background: #0a6f3a;
+      color: white;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 13px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s;
+      position: absolute;
+      margin-left: 8px;
+    }
+
+    .show .hint {
+      opacity: 1;
+    }
+
+    .dynmap-link {
+      display: inline-flex;
+      align-items: center;
+      background: #0a6f3a;
+      color: white;
+      text-decoration: none;
+      padding: 6px 12px;
+      border-radius: 4px;
       font-size: 14px;
+      margin-left: 12px;
+      transition: background 0.2s;
     }
-    .btn.secondary {
-      background: #e6e6e6;
-      color: #111;
+
+    .dynmap-link:hover {
+      background: #085c30;
     }
-    .steps {
-      margin: 8px 0 0 0;
-      padding-left: 18px;
-      color: #222;
-      font-size: 14px;
-    }
-    .small {
-      font-size: 12px;
+
+    .label {
       color: #666;
+      margin-right: 4px;
     }
   </style>
 </head>
 <body>
-  <div id="server-ip" role="button" tabindex="0" data-ip="mc.krecoun.fun" title="Klikni pro zkopírování">
-    IP: mc.krecoun.fun
-    <span class="hint" aria-hidden="true">Zkopírováno!</span>
-    <a href="http://map.krecoun.fun" class="dynmap-link" target="_blank" rel="noopener noreferrer" title="Otevřít mapu serveru" onclick="event.stopPropagation()">🗺️ Mapa</a>
-  </div>
-
-  <!-- přidáno: informace o serveru a instrukce pro CurseForge -->
-  <section class="card" id="server-info-card">
-    <h2>Informace o serveru</h2>
-    <div class="meta"><strong>IP:</strong> <span id="server-ip-text">mc.krecoun.fun</span></div>
-    <div class="meta"><strong>Typ:</strong> Minecraft (Forge/Modpack)</div>
-    <div class="meta small">Kliknutím na IP ji zkopírujete do schránky.</div>
-
-    <h2 style="margin-top:12px">Jak přidat modpack do CurseForge</h2>
-    <ol class="steps">
-    </ol>
-
-    <div class="actions">
-      <button class="btn" id="copy-modpack-url" data-copy="" title="Zkopíruje kod">Kopírovat kod </button>
+  <div class="card">
+    <h1>Krecoun Minecraft Server</h1>
+    
+    <div class="info-row">
+      <span class="label">IP serveru:</span>
+      <span class="clickable-ip" role="button" tabindex="0" title="Klikni pro zkopírování">
+        mc.krecoun.fun
+        <span class="hint">Zkopírováno!</span>
+      </span>
+      <a href="http://map.krecoun.fun" class="dynmap-link" target="_blank" rel="noopener noreferrer">
+        🗺️ Mapa serveru
+      </a>
     </div>
 
-    <div id="modpack-hint" class="small" style="margin-top:10px; color:#0a6f3a;"></div>
-  </section>
+    <div class="info-row">
+      <span class="label">Verze:</span>
+      Minecraft Forge 1.21.8
+    </div>
+
+    <div class="info-row">
+      <span class="label">Typ:</span>
+      Survival s modpackem (není nutné)
+    </div>
+
+    <div class="info-row">
+      <span class="label">Discord:</span>
+      <a href="https://discord.gg/fHyF4gKnjr" style="color: #0a6f3a;">Připoj se na Discord</a>
+    </div>
+  </div>
 
   <script>
-    (function(){
-      const el = document.getElementById('server-ip');
-      if (!el) return;
-      const ip = el.dataset.ip || el.textContent.replace(/^IP:\s*/,'').trim();
-      const hint = el.querySelector('.hint');
+    const ipEl = document.querySelector('.clickable-ip');
+    const hint = ipEl.querySelector('.hint');
+    const ip = 'mc.krecoun.fun';
 
-      function showHint(elHint, text){
-        if (!elHint) return;
-        elHint.textContent = text;
-        elHint.parentElement && elHint.parentElement.classList && elHint.parentElement.classList.add('show');
-        clearTimeout(elHint._hideTimeout);
-        elHint._hideTimeout = setTimeout(()=> elHint.parentElement.classList.remove('show'), 1400);
+    async function copyToClipboard(text) {
+      try {
+        await navigator.clipboard.writeText(text);
+        return true;
+      } catch (err) {
+        return false;
       }
+    }
 
-      function copyToClipboard(text){
-        if (navigator.clipboard && navigator.clipboard.writeText) {
-          return navigator.clipboard.writeText(text).then(()=> { return true; })
-            .catch(()=> fallbackCopy(text));
-        } else {
-          return fallbackCopy(text);
-        }
+    function showHint() {
+      ipEl.classList.add('show');
+      setTimeout(() => ipEl.classList.remove('show'), 1500);
+    }
+
+    ipEl.addEventListener('click', async () => {
+      const copied = await copyToClipboard(ip);
+      if (copied) showHint();
+    });
+
+    ipEl.addEventListener('keydown', async (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        const copied = await copyToClipboard(ip);
+        if (copied) showHint();
       }
-
-      function fallbackCopy(text){
-        try {
-          const ta = document.createElement('textarea');
-          ta.value = text;
-          ta.style.position = 'fixed';
-          ta.style.left = '-9999px';
-          document.body.appendChild(ta);
-          ta.focus();
-          ta.select();
-          const ok = document.execCommand('copy');
-          document.body.removeChild(ta);
-          return ok;
-        } catch (e) {
-          return false;
-        }
-      }
-
-      // existující: IP copy
-      el.addEventListener('click', ()=> {
-        copyToClipboard(ip).then(()=> showHint(hint, 'Zkopírováno'));
-      });
-      el.addEventListener('keydown', (e)=>{
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault();
-          copyToClipboard(ip).then(()=> showHint(hint, 'Zkopírováno'));
-        }
-      });
-
-      // nové: kopírování URL modpacku a hint text
-      const copyButtons = document.querySelectorAll('[data-copy]');
-      const modpackHint = document.getElementById('modpack-hint');
-      copyButtons.forEach(btn => {
-        btn.addEventListener('click', ()=>{
-          const v = btn.getAttribute('data-copy');
-          copyToClipboard(v).then((ok)=>{
-            if (ok) {
-              modpackHint.textContent = 'URL modpacku zkopírována do schránky.';
-              setTimeout(()=> modpackHint.textContent = '', 1800);
-            } else {
-              modpackHint.textContent = 'Kopírování selhalo — stáhni modpack ručně.';
-              setTimeout(()=> modpackHint.textContent = '', 3000);
-            }
-          });
-        });
-      });
-    })();
+    });
   </script>
 </body>
+</html>
