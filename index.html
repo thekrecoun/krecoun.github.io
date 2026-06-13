@@ -1,155 +1,75 @@
 <!DOCTYPE html>
 <html lang="cs">
 <head>
-  <meta charset="utf-8">
-  <link rel="icon" type="image/x-icon" href="grass_block.ico">
-  <title>Krecoun server</title>
-  <style>
-    body {
-      background-color: #1a2866;
-      font-family: Arial, sans-serif;
-      margin: 40px;
-      color: #333;
-    }
-
-    .card {
-      background: #f7f7f7;
-      border-radius: 10px;
-      padding: 24px;
-      max-width: 600px;
-      margin: 40px auto;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    }
-
-    .card h1 {
-      margin: 0 0 20px 0;
-      color: #0a6f3a;
-      font-size: 24px;
-    }
-
-    .info-row {
-      margin: 12px 0;
-      font-size: 15px;
-      line-height: 1.5;
-    }
-
-    .clickable-ip {
-      background: rgba(10, 111, 58, 0.1);
-      padding: 6px 12px;
-      border-radius: 4px;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      margin-left: 4px;
-    }
-
-    .clickable-ip:hover {
-      background: rgba(10, 111, 58, 0.15);
-    }
-
-    .hint {
-      background: #0a6f3a;
-      color: white;
-      padding: 4px 8px;
-      border-radius: 4px;
-      font-size: 13px;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.2s;
-      position: absolute;
-      margin-left: 8px;
-    }
-
-    .show .hint {
-      opacity: 1;
-    }
-
-    .dynmap-link {
-      display: inline-flex;
-      align-items: center;
-      background: #0a6f3a;
-      color: white;
-      text-decoration: none;
-      padding: 6px 12px;
-      border-radius: 4px;
-      font-size: 14px;
-      margin-left: 12px;
-      transition: background 0.2s;
-    }
-
-    .dynmap-link:hover {
-      background: #085c30;
-    }
-
-    .label {
-      color: #666;
-      margin-right: 4px;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Můj Filmový Přehrávač</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            background-color: #0f0f0f;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            width: 100%;
+            max-width: 900px;
+        }
+        h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+        .player-wrapper {
+            position: relative;
+            width: 100%;
+            background: #000;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        video {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+        /* Styl pro skryté titulky přímo ve videu */
+        video::cue {
+            background: rgba(0, 0, 0, 0.75);
+            color: #fff;
+            font-size: 18px;
+        }
+    </style>
 </head>
 <body>
-  <div class="card">
-    <h1>Krecoun Minecraft Server</h1>
+
+<div class="container">
+    <h1>Název Vašeho Filmu</h1>
     
-    <div class="info-row">
-      <span class="label">IP serveru:</span>
-      <span class="clickable-ip" role="button" tabindex="0" title="Klikni pro zkopírování">
-        mc.krecoun.fun
-        <span class="hint">Zkopírováno!</span>
-      </span>
-      <a href="http://map.krecoun.fun" class="dynmap-link" target="_blank" rel="noopener noreferrer">
-        🗺️ Mapa serveru
-      </a>
+    <div class="player-wrapper">
+        <video controls poster="nahledovy-obrazek.jpg" preload="metadata">
+            <!-- Hlavní soubor s filmem -->
+            <source src="film.mp4" type="video/mp4">
+            
+            <!-- Volitelné titulky (formát .vtt) -->
+            <track src="titulky.vtt" kind="subtitles" srclang="cs" label="Čeština" default>
+            
+            Vaše rozhraní nepodporuje přehrávání HTML5 videí.
+        </video>
     </div>
+</div>
 
-    <div class="info-row">
-      <span class="label">Verze:</span>
-      Minecraft Forge 1.21.8
-    </div>
-
-    <div class="info-row">
-      <span class="label">Typ:</span>
-      Survival s modpackem (Bude přidán)
-    </div>
-
-    <div class="info-row">
-      <span class="label">Discord:</span>
-      <a href="https://discord.gg/fHyF4gKnjr" style="color: #0a6f3a;">Připoj se na Discord</a>
-    </div>
-  </div>
-
-  <script>
-    const ipEl = document.querySelector('.clickable-ip');
-    const hint = ipEl.querySelector('.hint');
-    const ip = 'mc.krecoun.fun';
-
-    async function copyToClipboard(text) {
-      try {
-        await navigator.clipboard.writeText(text);
-        return true;
-      } catch (err) {
-        return false;
-      }
-    }
-
-    function showHint() {
-      ipEl.classList.add('show');
-      setTimeout(() => ipEl.classList.remove('show'), 1500);
-    }
-
-    ipEl.addEventListener('click', async () => {
-      const copied = await copyToClipboard(ip);
-      if (copied) showHint();
-    });
-
-    ipEl.addEventListener('keydown', async (e) => {
-      if (e.key === 'Enter' || e.key === ' ') {
-        e.preventDefault();
-        const copied = await copyToClipboard(ip);
-        if (copied) showHint();
-      }
-    });
-  </script>
 </body>
 </html>
